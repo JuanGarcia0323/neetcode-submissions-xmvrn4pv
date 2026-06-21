@@ -1,0 +1,58 @@
+class TrieNode {
+    constructor(){
+        this.children = new Map()
+        this.isWord = false
+    }
+}
+
+class WordDictionary {
+    constructor() {
+        this.root = new TrieNode()
+    }
+
+    /**
+     * @param {string} word
+     * @return {void}
+     */
+    addWord(word) {
+        let curr = this.root
+        for(const w of word){
+            if(!curr.children.has(w)){
+                curr.children.set(w, new TrieNode())
+            }
+            curr = curr.children.get(w)
+        }
+        curr.isWord = true
+    }
+
+    /**
+     * @param {string} word
+     * @return {boolean}
+     */
+    search(word) {
+        const recursiveSearch = (node, i=0) => {
+            if(i === word.length){
+                return node.isWord
+            }
+
+            const currentLetter = word[i]
+
+            if(currentLetter === '.'){
+                const keys = [...node.children.keys()]
+                for(const k of keys){
+                    if(!recursiveSearch(node.children.get(k), i+1)){
+                        continue
+                    }
+                    return true
+                }
+            }
+
+            if(!node.children.has(currentLetter)){
+                return false
+            }
+
+            return recursiveSearch(node.children.get(currentLetter), i+1)
+        }
+        return recursiveSearch(this.root)
+    }
+}
